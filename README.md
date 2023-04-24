@@ -1,3 +1,8 @@
+[![Twitter](https://img.shields.io/twitter/url?label=Follow%20Me%21&style=social&url=https%3A%2F%2Ftwitter.com%2Fdozercat31)](https://twitter.com/dozercat31)
+![GitHub last commit](https://img.shields.io/github/last-commit/hackersifu/log_analysis_buddy)
+![GitHub](https://img.shields.io/github/license/hackersifu/log_analysis_buddy)
+
+
 # Log Analysis Buddy - AI Powered Log Analysis Helper
 The Log Analysis Buddy is an AI powered log analysis helper that can be used to help analysts perform log analysis. The Log analysis Buddy uses OpenAI to receive log input (in .csv, or comma delimited, format) from an incident responder, to perform additional analysis for the responder. This analysis can be used to augment the responder's investigation, to provide thourogh results for reporting.
 
