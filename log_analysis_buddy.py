@@ -10,6 +10,7 @@ analysis_file_var = 'random.txt'
 analysis_file_location = os.getcwd()
 analysis_file_full_path = os.path.join(analysis_file_location, analysis_file_var)
 
+
 def banner():
     """Function for Log Analysis Buddy banner"""
     print('''
@@ -40,7 +41,8 @@ _/____/___(___(__(___/___(___/___(___/_
         Joshua "DozerCat" McKiddy
         Twitter - @dozercat31
 ''')
-    
+
+
 def log_analysis_buddy():
     """Function to run Log Analysis Buddy"""
     banner()
@@ -54,7 +56,7 @@ def log_analysis_buddy():
     additional_context_raw = input()
     additional_context = str(additional_context_raw)
 
-
+    # Open the log file and read it into a variable for consumption by the OpenAI API
     try:
         with open(log_file_location, 'r') as csv_file:
             log_csv_reader = csv.reader(csv_file)
