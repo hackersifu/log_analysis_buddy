@@ -7,7 +7,7 @@
 The Log Analysis Buddy is an AI powered log analysis helper that can be used to help analysts perform log analysis. The Log analysis Buddy uses OpenAI to receive log input (in .csv, or comma delimited, format) from an incident responder, to perform additional analysis for the responder. This analysis can be used to augment the responder's investigation, to provide thourogh results for reporting.
 
 ## Disclaimer
-2023-04-24: This project is currently in development and is a proof of concept. Additionally, you are responsible for any data that you provide to OpenAI via this project. Please ensure that you are not providing any sensitive data to OpenAI via this project. This includes any logs that are provided, API keys, and any data via the context prompt.
+**2023-04-24: This project is currently in development and is a proof of concept. Additionally, you are responsible for any data that you provide to OpenAI via this project. Please ensure that you are not providing any sensitive data to OpenAI via this project. This includes any logs that are provided, API keys, and any data via the context prompt.**
 
 ## Prerequisites
 The following are prerequisites for using the Log Analysis Buddy:
