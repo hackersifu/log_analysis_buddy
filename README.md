@@ -77,7 +77,9 @@ Look for malicious trends.
 ## Example Output
 ```
 Possible malicious trends:
--A large number of events coming from a single IP address, particularly one that is not within the AWS infrastructure. This could indicate someone attempting to access AWS resources maliciously.
+-A large number of events coming from a single IP address, particularly one that is not 
+within the AWS infrastructure. This could indicate someone attempting to access 
+AWS resources maliciously.
 ```
 
 ## Contributions & Feedback
