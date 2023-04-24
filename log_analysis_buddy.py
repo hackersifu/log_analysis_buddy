@@ -77,11 +77,11 @@ def log_analysis_buddy():
             Use this additional context when performing the analysis: 
             """
             + additional_context,
-            temperature=0.9,
+            temperature=0.4,
             max_tokens=2000,
             top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0.6,
+            frequency_penalty=-0.3,
+            presence_penalty=0.3,
             stop=None
         )
 
