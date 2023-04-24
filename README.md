@@ -11,27 +11,66 @@ The following are prerequisites for using the Log Analysis Buddy:
 ## How to Use
 Steps to use the Log Analysis Buddy:
 1. Install the OpenAI Python library using pip (if not installed already).
-'''
+```
 pip install openai
 OR
 pip3 install openai
-'''
+```
 2. Place the log_analysis_buddy.py file in the same location as the log files to be analyzed.
 3. Run the log_analysis_buddy.py file using Python 3.7 or higher.
-'''
+```
 python log_analysis_buddy.py
 OR
 python3 log_analysis_buddy.py
-'''
+```
 4. Enter the OpenAI API key when prompted.
 5. Enter the name of the log file to be analyzed (including the .csv extension).
 6. Enter context for the analysis (i.e. "Look for malicious trends.").
 
+## Example Input
+```
+python log_analysis_buddy.py
+
+____________________
+    _
+    /
+---/-------__----__-
+  /      /   ) /   )
+_/____/_(___/_(___/_
+                 /
+             (_ /
+____________________________________________
+    __
+    / |                /              ,
+---/__|----__----__---/---------__-------__-
+  /   |  /   ) /   ) /   /   / (_ ` /   (_ `
+_/____|_/___/_(___(_/___(___/_(__)_/___(__)_
+                           /
+                       (_ /
+_______________________________________
+    ____
+    /   )               /       /
+---/__ /------------__-/----__-/-------
+  /    )   /   /  /   /   /   /   /   /
+_/____/___(___(__(___/___(___/___(___/_
+                                    /
+                                (_ /
+        Joshua "DozerCat" McKiddy
+        Twitter - @dozercat31
+
+Please enter the OpenAI API Key you would like to use for this session.
+sk-addyourkeyhere
+Please provide the log file you would like to analyze. Please ensure that they are in CSV format and located in the same file as the log_analysis_buddy.py file.
+test_logs.csv
+Please provide any additional context you'd like to provide to the Log Analysis Buddy.
+Look for malicious trends.
+```
+
 ## Example Output
-'''
+```
 Possible malicious trends:
 -A large number of events coming from a single IP address, particularly one that is not within the AWS infrastructure. This could indicate someone attempting to access AWS resources maliciously.
-'''
+```
 
 ## Contributions & Feedback
 For any contributions, feel free to create a [GitHub Pull Request](https://github.com/hackersifu/log_analysis_buddy/pulls). Additionally, you can use the Issues section to report bugs or submit feedback.

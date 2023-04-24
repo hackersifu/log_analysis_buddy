@@ -46,7 +46,7 @@ def log_analysis_buddy():
     banner()
     print("Please enter the OpenAI API Key you would like to use for this session.")
     openai.api_key = input()
-    print("Please provide the log file you would like to analyze. Please ensure that they are in CSV format.")
+    print("Please provide the log file you would like to analyze. Please ensure that they are in CSV format and located in the same file as the log_analysis_buddy.py file.")
     log_file = input()
     log_location = os.getcwd()
     log_file_location = os.path.join(log_location, log_file)
