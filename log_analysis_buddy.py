@@ -70,7 +70,7 @@ def log_analysis_buddy():
 
 
         response = openai.Completion.create(
-            engine="text-davinci-002",
+            model="text-davinci-002",
             prompt="""
             Perform a detailed security analysis of these logs: 
             """
@@ -89,10 +89,20 @@ def log_analysis_buddy():
 
         print(response["choices"][0]["text"])
 
+    except Exception as exception_handle:
+        logging.error(exception_handle)
+
+def file_cleanup():
+    """Function to clean up the log file that was created for analysis"""
+    try:
+        print("")
+        print("Cleanup of the log file that was created for analysis.")
         os.remove(analysis_file_var)
+        print("Done.")
     except Exception as exception_handle:
         logging.error(exception_handle)
 
 
 if __name__ == '__main__':
     log_analysis_buddy()
+    file_cleanup()
