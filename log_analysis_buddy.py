@@ -106,3 +106,4 @@ def file_cleanup():
 if __name__ == '__main__':
     log_analysis_buddy()
     file_cleanup()
+    
