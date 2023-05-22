@@ -13,16 +13,18 @@ The Log Analysis Buddy is an AI powered log analysis helper that can be used to 
 The following are prerequisites for using the Log Analysis Buddy:
 - An OpenAPI key (from creating an OpenAI account)
 - Log files in .csv format (comma delimited), placed in the same location as the log_analysis_buddy.py file
-- Python 3.7 or higher
-- OpenAI Python library (installed via pip)
+- Python 3.9 or higher
+- Python packages contained in the requirements.txt file (installed via pip)
+  - openai (and various dependent packages for this module)
+  - inquirer (and various dependent packages for this module)
 
 ## How to Use
 Steps to use the Log Analysis Buddy:
-1. Install the OpenAI Python library using pip (if not installed already).
+1. Install the dependencies within the requirements file using pip (if not installed already).
 ```
-pip install openai
+pip install -r requirements.txt
 OR
-pip3 install openai
+pip3 install -r requirements.txt
 ```
 2. Place the log_analysis_buddy.py file in the same location as the log files to be analyzed.
 3. Run the log_analysis_buddy.py file using Python 3.7 or higher.
@@ -34,6 +36,7 @@ python3 log_analysis_buddy.py
 4. Enter the OpenAI API key when prompted.
 5. Enter the name of the log file to be analyzed (including the .csv extension).
 6. Enter context for the analysis (i.e. "Look for malicious trends.").
+7. NEW! Select the model to use for the analysis (i.e. gpt-3.5-turbo) from the provided list.
 
 ## Example Input
 ```
@@ -72,6 +75,9 @@ Please provide the log file you would like to analyze. Please ensure that they a
 test_logs.csv
 Please provide any additional context you'd like to provide to the Log Analysis Buddy.
 Look for malicious trends.
+[?] Please select the model you would like to use for this session.: gpt-3.5-turbo
+   text-davinci-002
+ > gpt-3.5-turbo
 ```
 
 ## Example Output
