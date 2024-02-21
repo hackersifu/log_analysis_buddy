@@ -92,4 +92,4 @@ AWS resources maliciously.
 For any contributions, feel free to create a [GitHub Pull Request](https://github.com/hackersifu/log_analysis_buddy/pulls). Additionally, you can use the Issues section to report bugs or submit feedback.
 
 ## License
-This project is licensed under the Apache 2.0 licensing terms.
+This project is licensed under the Apache 2.0 licensing terms. Please see the LICENSE file for more information.
