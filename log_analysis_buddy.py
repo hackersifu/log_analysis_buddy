@@ -54,7 +54,7 @@ def prompt_questions():
         model_selection = [
             inquirer.List('model',
                         message="Please select the model you would like to use for this session.",
-                        choices=['text-davinci-002', 'gpt-3.5-turbo'],
+                        choices=['text-davinci-002', 'gpt-3.5-turbo', 'gpt-4'],
                         ),
         ]
         # Data type conversion to JSON, then to string to get the model selection
@@ -124,6 +124,34 @@ def log_analysis_buddy(log_file_location, additional_context, model_string, anal
                 temperature=0.4,
                 top_p=1,
                 frequency_penalty=-0.3,
+                presence_penalty=0.3,
+                stop=None
+            )
+            print(response["choices"][0]["message"]["content"])
+        # gpt-4 model code
+        elif model_string == 'gpt-4':
+            print(model_string + " selected.")
+            with open(log_file_location, 'r') as csv_file:
+                log_csv_reader = csv.reader(csv_file)
+                with open(analysis_file_var, 'a') as analysis_file:
+                    for line in log_csv_reader:
+                        analysis_file.write(str(line))
+                        analysis_file.write("\n")
+
+            with open(analysis_file_var, 'r') as analysis_file:
+                contents = analysis_file.read()
+
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=[
+                            {
+                                "role": "user", 
+                                "content": "Perform a detailed security analysis of these logs: " + contents + " Also, use this additional context when performing the analysis: " + additional_context
+                            }
+                        ],
+                temperature=0.3,
+                top_p=1,
+                frequency_penalty=-0.6,
                 presence_penalty=0.3,
                 stop=None
             )
