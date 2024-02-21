@@ -26,6 +26,7 @@ pip install -r requirements.txt
 OR
 pip3 install -r requirements.txt
 ```
+If you're using an `apt` based environment, and you want to avoid mixing package installs, use a virtual environment with `venv` instead.
 2. Place the log_analysis_buddy.py file in the same location as the log files to be analyzed.
 3. Run the log_analysis_buddy.py file using Python 3.7 or higher.
 ```
