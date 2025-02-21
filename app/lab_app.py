@@ -4,7 +4,7 @@ import tempfile
 import logging
 import traceback
 from log_analysis_buddy import analyze_logs
-from service.ollama_utils import list_local_models, pull_model
+from ollama_utils import list_local_models, pull_model
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 

@@ -15,11 +15,11 @@ RUN pip install --upgrade pip setuptools wheel
 WORKDIR /app
 
 # Copy the requirements file and install Python dependencies
-COPY requirements.txt ./
+COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code to the container
-COPY . .
+COPY . /app/
 
 # Expose the port on which the application will run
 EXPOSE 8501
@@ -29,4 +29,4 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Run the app
-CMD ["python", "streamlit", "service/lab_app.py"]
+CMD ["streamlit", "run", "app/lab_app.py"]

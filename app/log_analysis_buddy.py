@@ -2,7 +2,7 @@
 import os
 import csv
 import logging
-from service.llm_provider import get_default_provider
+from llm_provider import get_default_provider
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
