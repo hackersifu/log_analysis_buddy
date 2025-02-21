@@ -1,183 +1,93 @@
-# Log Analysis Buddy - AI Powered Log Analysis Helper
+# log_analysis_buddy.py - Modular Log Analysis Functionality
 
-import openai
 import os
 import csv
 import logging
-import inquirer
-import json
+from service.llm_provider import get_default_provider
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def banner():
-    """Function for Log Analysis Buddy banner"""
-    print('''
-____________________                        
-    _                                       
-    /                                       
----/-------__----__-                        
-  /      /   ) /   )                        
-_/____/_(___/_(___/_                        
-                 /                          
-             (_ /                           
-____________________________________________
-    __                                      
-    / |                /              ,     
----/__|----__----__---/---------__-------__-
-  /   |  /   ) /   ) /   /   / (_ ` /   (_ `
-_/____|_/___/_(___(_/___(___/_(__)_/___(__)_
-                           /                
-                       (_ /                 
-_______________________________________     
-    ____                                    
-    /   )               /       /           
----/__ /------------__-/----__-/-------     
-  /    )   /   /  /   /   /   /   /   /     
-_/____/___(___(__(___/___(___/___(___/_     
-                                    /       
-                                (_ /      
-        Joshua "DozerCat" McKiddy
-        Twitter - @dozercat31
-''')
-    
-def prompt_questions():
-    """Function for prompting questions to the user"""
+def read_log_file(file_path):
+    """Read the CSV log file and return its contents as a string."""
     try:
-        print("Please enter the OpenAI API Key you would like to use for this session.")
-        openai.api_key = input()
-        print("Please provide the log file you would like to analyze. Please ensure that they are in CSV format and located in the same file as the log_analysis_buddy.py file.")
-        log_file = input()
-        log_location = os.getcwd()
-        log_file_location = os.path.join(log_location, log_file)
-        print("Please provide any additional context you'd like to provide to the Log Analysis Buddy.")
-        additional_context_raw = input()
-        additional_context = str(additional_context_raw)
-        model_selection = [
-            inquirer.List('model',
-                        message="Please select the model you would like to use for this session.",
-                        choices=['text-davinci-002', 'gpt-3.5-turbo', 'gpt-4'],
-                        ),
-        ]
-        # Data type conversion to JSON, then to string to get the model selection
-        model_selection_answers = inquirer.prompt(model_selection)
-        model_string_raw = json.dumps(model_selection_answers)
-        model_json = json.loads(model_string_raw)
-        model_string = (model_json["model"])
-    except Exception as exception_handle:
-        logging.error(exception_handle)
-    return log_file_location, additional_context, model_string
+        with open(file_path, 'r', encoding='utf-8') as csvfile:
+            reader = csv.reader(csvfile)
+            lines = [" ".join(line) for line in reader]
+            return "\n".join(lines)
+    except Exception as e:
+        logging.error(f"Error reading log file: {e}")
+        return ""
 
-def log_analysis_buddy(log_file_location, additional_context, model_string, analysis_file_var):
-    """Function to run Log Analysis Buddy"""
+def analyze_logs(provider_choice, api_key, log_file_path, additional_context, model_string):
+    """
+    Perform log analysis by:
+      - Reading the log file
+      - Constructing the prompt (combining log contents and additional context)
+      - Calling the selected LLM provider to generate a response
+    Returns the LLM response as a string.
+    """
+    logging.info("Starting log analysis...")
+    if not os.path.exists(log_file_path):
+        logging.error("Log file not found.")
+        return None
+
+    log_contents = read_log_file(log_file_path)
+    if not log_contents:
+        logging.error("No log contents could be read.")
+        return None
+
+    prompt_text = f"Perform a detailed security analysis of these logs:\n{log_contents}\n\nAdditional context: {additional_context}"
+    logging.info("Constructed prompt for LLM.")
+
+    # Instantiate the appropriate provider.
+    if provider_choice == "OpenAI":
+        provider = get_default_provider("openai", api_key=api_key)
+    else:
+        provider = get_default_provider("ollama")
+
     try:
-        # text-davinci-002 model code
-        if model_string == 'text-davinci-002':
-            print(model_string + " selected.")
-            with open(log_file_location, 'r') as csv_file:
-                log_csv_reader = csv.reader(csv_file)
-                with open(analysis_file_var, 'a') as analysis_file:
-                    for line in log_csv_reader:
-                        analysis_file.write(str(line))
-                        analysis_file.write("\n")
-
-            with open(analysis_file_var, 'r') as analysis_file:
-                contents = analysis_file.read()
-
-            response = openai.Completion.create(
-                model="text-davinci-002",
-                prompt="""
-                Perform a detailed security analysis of these logs: 
-                """
-                + contents +
-                """
-                Use this additional context when performing the analysis: 
-                """
-                + additional_context,
-                temperature=0.4,
-                max_tokens=2000,
-                top_p=1,
-                frequency_penalty=-0.3,
-                presence_penalty=0.3,
-                stop=None
-            )
-            print(response["choices"][0]["text"])
-        # gpt-3.5-turbo model code
-        elif model_string == 'gpt-3.5-turbo':
-            print(model_string + " selected.")
-            with open(log_file_location, 'r') as csv_file:
-                log_csv_reader = csv.reader(csv_file)
-                with open(analysis_file_var, 'a') as analysis_file:
-                    for line in log_csv_reader:
-                        analysis_file.write(str(line))
-                        analysis_file.write("\n")
-
-            with open(analysis_file_var, 'r') as analysis_file:
-                contents = analysis_file.read()
-
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                            {
-                                "role": "user", 
-                                "content": "Perform a detailed security analysis of these logs: " + contents + " Also, use this additional context when performing the analysis: " + additional_context
-                            }
-                        ],
-                temperature=0.4,
-                top_p=1,
-                frequency_penalty=-0.3,
-                presence_penalty=0.3,
-                stop=None
-            )
-            print(response["choices"][0]["message"]["content"])
-        # gpt-4 model code
-        elif model_string == 'gpt-4':
-            print(model_string + " selected.")
-            with open(log_file_location, 'r') as csv_file:
-                log_csv_reader = csv.reader(csv_file)
-                with open(analysis_file_var, 'a') as analysis_file:
-                    for line in log_csv_reader:
-                        analysis_file.write(str(line))
-                        analysis_file.write("\n")
-
-            with open(analysis_file_var, 'r') as analysis_file:
-                contents = analysis_file.read()
-
-            response = openai.ChatCompletion.create(
-                model="gpt-4",
-                messages=[
-                            {
-                                "role": "user", 
-                                "content": "Perform a detailed security analysis of these logs: " + contents + " Also, use this additional context when performing the analysis: " + additional_context
-                            }
-                        ],
-                temperature=0.3,
-                top_p=1,
-                frequency_penalty=-0.6,
-                presence_penalty=0.3,
-                stop=None
-            )
-            print(response["choices"][0]["message"]["content"])
-
-    except Exception as exception_handle:
-        logging.error(exception_handle)
-
-def file_cleanup():
-    """Function to clean up the log file that was created for analysis"""
-    try:
-        print("")
-        print("Cleanup of the log file that was created for analysis.")
-        os.remove(analysis_file_var)
-        print("Done.")
-    except Exception as exception_handle:
-        logging.error(exception_handle)
-
+        response = provider.send_prompt(model_string, prompt_text)
+        logging.info("LLM response received successfully.")
+        return response
+    except Exception as e:
+        logging.error(f"Error during LLM call: {e}")
+        return None
 
 if __name__ == '__main__':
-    """Main function for Log Analysis Buddy"""
-    analysis_file_var = 'random.txt'
-    analysis_file_location = os.getcwd()
-    analysis_file_full_path = os.path.join(analysis_file_location, analysis_file_var)
-    banner()
-    log_file_location, additional_context, model_string = prompt_questions()
-    log_analysis_buddy(log_file_location, additional_context, model_string, analysis_file_var)
-    file_cleanup()
-    
+    # This section preserves CLI usage via interactive prompts.
+    import inquirer
+
+    provider_answer = inquirer.prompt([
+        inquirer.List('provider', message="Select LLM Provider", choices=["Ollama", "OpenAI"])
+    ])
+    provider_choice = provider_answer['provider']
+
+    api_key = ""
+    if provider_choice == "OpenAI":
+        print("Enter your OpenAI API Key:")
+        api_key = input().strip()
+
+    print("Enter the CSV log file path (relative to current directory):")
+    log_file = input().strip()
+    log_file_path = os.path.join(os.getcwd(), log_file)
+
+    print("Enter any additional context for the analysis:")
+    additional_context = input().strip()
+
+    if provider_choice == "OpenAI":
+        model_choices = ["gpt-3.5-turbo", "gpt-4"]
+    else:
+        model_choices = ["Ollama-gpt-4", "Ollama-gpt-3.5"]
+
+    model_answer = inquirer.prompt([
+        inquirer.List('model', message="Select the model for this session", choices=model_choices)
+    ])
+    model_string = model_answer["model"]
+
+    result = analyze_logs(provider_choice, api_key, log_file_path, additional_context, model_string)
+    if result:
+        print("\n========== LLM Response ==========")
+        print(result)
+        print("====================================\n")
+    else:
+        print("Log analysis failed.")
