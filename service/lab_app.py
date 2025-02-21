@@ -4,11 +4,12 @@ import tempfile
 import logging
 import traceback
 from log_analysis_buddy import analyze_logs
+from service.ollama_utils import list_local_models, pull_model
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 st.title("Log Analysis Buddy - LLM Integration")
-st.write("Select an LLM provider, provide API details (if needed), attach a log file or enter its path, enter your prompt and additional context, then run the analysis.")
+st.write("Select an LLM provider, configure API details (if needed), attach a log file or enter its path, enter your prompt and additional context, then run the analysis.")
 
 # Select LLM Provider
 provider_choice = st.selectbox("Select LLM Provider", ["Ollama", "OpenAI"])
@@ -18,9 +19,20 @@ if provider_choice == "OpenAI":
     if not openai_api_key:
         st.error("OpenAI API Key is required for OpenAI.")
 else:
-    # For Ollama, allow overriding the default API URL.
     ollama_api_url = st.text_input("Ollama API URL", value="http://localhost:11434/api")
     ollama_api_key = st.text_input("Ollama API Key (if required)", type="password")
+
+# Additional Ollama operations (only if provider is Ollama)
+if provider_choice == "Ollama":
+    st.subheader("Ollama Model Management")
+    if st.button("List Local Models"):
+        output = list_local_models()
+        st.text_area("Local Models", value=output, height=200)
+    
+    pull_model_choice = st.selectbox("Select a model to pull", ["llama3.2", "deepseek-r1"])
+    if st.button("Pull Selected Model"):
+        pull_output = pull_model(pull_model_choice)
+        st.text_area("Pull Output", value=pull_output, height=200)
 
 # Log input method: either upload CSV or enter a file path.
 log_input_method = st.radio("Select log input method", ["Upload CSV", "Enter file path"])
@@ -56,12 +68,11 @@ else:
 model_choice = st.selectbox("Select Model", available_models)
 
 if st.button("Run Analysis"):
-    if (provider_choice == "OpenAI" and not st.session_state.get("openai_api_key", openai_api_key)) or log_file_path is None or not prompt_text:
+    if (provider_choice == "OpenAI" and not openai_api_key) or log_file_path is None or not prompt_text:
         st.error("Please ensure all required fields are filled and a valid log file is provided.")
     else:
         st.info("Running analysis...")
         try:
-            # Call the log analysis function.
             response = analyze_logs(
                 provider_choice=provider_choice,
                 api_key=openai_api_key if provider_choice == "OpenAI" else None,
@@ -78,9 +89,9 @@ if st.button("Run Analysis"):
             tb = traceback.format_exc()
             st.error(f"Log analysis failed with error: {e}\n\nTraceback:\n{tb}")
         finally:
-            # Clean up temporary file if created via upload.
             if log_input_method == "Upload CSV" and log_file_path:
                 try:
                     os.remove(log_file_path)
                 except Exception as e:
                     st.error(f"Error cleaning up temporary file: {e}")
+

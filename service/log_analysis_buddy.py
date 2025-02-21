@@ -1,5 +1,4 @@
 # log_analysis_buddy.py - Modular Log Analysis Functionality
-
 import os
 import csv
 import logging
@@ -21,9 +20,9 @@ def read_log_file(file_path):
 def analyze_logs(provider_choice, api_key, log_file_path, additional_context, model_string):
     """
     Perform log analysis by:
-      - Reading the log file
-      - Constructing the prompt (combining log contents and additional context)
-      - Calling the selected LLM provider to generate a response
+      - Reading the log file.
+      - Constructing the prompt (combining log contents and additional context).
+      - Calling the selected LLM provider to generate a response.
     Returns the LLM response as a string.
     """
     logging.info("Starting log analysis...")
@@ -54,36 +53,29 @@ def analyze_logs(provider_choice, api_key, log_file_path, additional_context, mo
         return None
 
 if __name__ == '__main__':
-    # This section preserves CLI usage via interactive prompts.
+    # CLI mode (if needed)
     import inquirer
-
     provider_answer = inquirer.prompt([
         inquirer.List('provider', message="Select LLM Provider", choices=["Ollama", "OpenAI"])
     ])
     provider_choice = provider_answer['provider']
-
     api_key = ""
     if provider_choice == "OpenAI":
         print("Enter your OpenAI API Key:")
         api_key = input().strip()
-
     print("Enter the CSV log file path (relative to current directory):")
     log_file = input().strip()
     log_file_path = os.path.join(os.getcwd(), log_file)
-
     print("Enter any additional context for the analysis:")
     additional_context = input().strip()
-
     if provider_choice == "OpenAI":
         model_choices = ["gpt-3.5-turbo", "gpt-4"]
     else:
         model_choices = ["Ollama-gpt-4", "Ollama-gpt-3.5"]
-
     model_answer = inquirer.prompt([
         inquirer.List('model', message="Select the model for this session", choices=model_choices)
     ])
     model_string = model_answer["model"]
-
     result = analyze_logs(provider_choice, api_key, log_file_path, additional_context, model_string)
     if result:
         print("\n========== LLM Response ==========")

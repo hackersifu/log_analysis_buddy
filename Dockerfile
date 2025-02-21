@@ -28,5 +28,5 @@ EXPOSE 8501
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Run the application
+# Run the app
 CMD ["python", "streamlit", "service/lab_app.py"]
