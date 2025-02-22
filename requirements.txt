@@ -5,3 +5,4 @@ wheel==0.45.1
 streamlit==1.37.0
 altair==4.2.2
 ollama==0.4.7
+langchain==0.3.19

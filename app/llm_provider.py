@@ -8,7 +8,7 @@ class BaseLLMProvider:
         raise NotImplementedError
 
 class OllamaProvider(BaseLLMProvider):
-    def __init__(self, api_url="http://localhost:11434/api", api_key=None):
+    def __init__(self, api_url="http://host.docker.internal:11434/api", api_key=None):
         self.api_url = api_url
         self.api_key = api_key
 
@@ -65,7 +65,7 @@ class OpenAIProvider(BaseLLMProvider):
 def get_default_provider(provider_name="ollama", **kwargs):
     if provider_name.lower() == "ollama":
         return OllamaProvider(
-            api_url=kwargs.get("api_url", "http://localhost:11434/api"),
+            api_url=kwargs.get("api_url", "http://host.docker.internal:11434/api"),
             api_key=kwargs.get("api_key")
         )
     elif provider_name.lower() == "openai":

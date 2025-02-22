@@ -19,7 +19,7 @@ if provider_choice == "OpenAI":
     if not openai_api_key:
         st.error("OpenAI API Key is required for OpenAI.")
 else:
-    ollama_api_url = st.text_input("Ollama API URL", value="http://localhost:11434/api")
+    ollama_api_url = st.text_input("Ollama API URL", value="http://host.docker.internal:11434/api")
     ollama_api_key = st.text_input("Ollama API Key (if required)", type="password")
 
 # Additional Ollama operations (only if provider is Ollama)

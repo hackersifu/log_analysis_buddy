@@ -3,6 +3,7 @@ FROM python:3.11-slim AS build
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
+    curl \
     python3-dev \
     python3-distutils \
     libatlas-base-dev \
@@ -18,6 +19,9 @@ WORKDIR /app
 COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Example: install ollama CLI if available for Linux
+RUN curl -fsSL https://ollama.ai/install.sh | sh
+
 # Copy the rest of the application code to the container
 COPY . /app/
 
@@ -29,4 +33,4 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Run the app
-CMD ["streamlit", "run", "app/lab_app.py"]
+CMD ["sh", "-c", "ollama serve & streamlit run app/lab_app.py"]

@@ -1,15 +1,18 @@
-import subprocess
+import ollama
+import langchain
+
+ollama.api_url = "http://host.docker.internal:11434/api"
 
 def list_local_models():
-    try:
-        output = subprocess.check_output(["ollama", "list"], stderr=subprocess.STDOUT)
-        return output.decode("utf-8")
-    except Exception as e:
-        return f"Error listing models: {e}"
+    """Function to list local Ollama models."""
+    local_models = ollama.list()
+    return local_models
 
-def pull_model(model):
-    try:
-        output = subprocess.check_output(["ollama", "pull", model], stderr=subprocess.STDOUT)
-        return output.decode("utf-8")
-    except Exception as e:
-        return f"Error pulling model {model}: {e}"
+def pull_model(model_name):
+    """Function to pull an Ollama model."""
+    model = ollama.pull(model_name)
+    return model
+
+def log_loader():
+    """Function to load log data."""
+    return langchain.load_log_data()
