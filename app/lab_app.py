@@ -3,14 +3,15 @@ import os
 import tempfile
 import logging
 import traceback
-from log_analysis_buddy import analyze_logs
+from log_analysis_buddy import analyze_logs, parse_log_file
 from ollama_utils import list_local_models, pull_model
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 st.title("Log Analysis Buddy - Scan Security Logs for Analysis and Actions")
-st.write("Select an LLM provider, configure API details (if needed), attach a log file or enter its path, enter your prompt and additional context, then run the analysis.")
+st.write("Select an LLM provider, configure API details if needed, attach a log file (or provide its path), enter your prompt and additional context, then run the analysis.")
 
+# Select LLM Provider
 provider_choice = st.selectbox("Select LLM Provider", ["Ollama", "OpenAI"])
 
 if provider_choice == "OpenAI":
@@ -21,23 +22,23 @@ else:
     ollama_api_url = st.text_input("Ollama API URL", value="http://host.docker.internal:11434/api")
     ollama_api_key = st.text_input("Ollama API Key (if required)", type="password")
 
-# Ollama specific details
+# Ollama-specific operations
 if provider_choice == "Ollama":
     st.subheader("Ollama Model Management")
     if st.button("List Local Models"):
         output = list_local_models()
-        st.text_area("Local Models", value=output, height=200)
+        st.text_area("Local Models", value=str(output), height=200)
     
     pull_model_choice = st.selectbox("Select a model to pull", ["llama3.2", "deepseek-r1"])
     if st.button("Pull Selected Model"):
         pull_output = pull_model(pull_model_choice)
         st.text_area("Pull Output", value=pull_output, height=200)
 
-# Log input method: either upload CSV or enter a file path.
+# Log input method: Upload CSV or enter file path.
 log_input_method = st.radio("Select log input method", ["Upload CSV", "Enter file path"])
 log_file_path = None
 if log_input_method == "Upload CSV":
-    uploaded_file = st.file_uploader("Upload Log CSV", type=["csv"])
+    uploaded_file = st.file_uploader("Upload Log CSV", type=["csv", "json", "txt"])
     if uploaded_file is not None:
         try:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_file:
@@ -46,7 +47,7 @@ if log_input_method == "Upload CSV":
         except Exception as e:
             st.error(f"Error saving uploaded file: {e}")
 elif log_input_method == "Enter file path":
-    file_path = st.text_input("Enter full path to log CSV file", value="")
+    file_path = st.text_input("Enter full path to log file", value="")
     if file_path:
         if os.path.exists(file_path):
             log_file_path = file_path
@@ -70,8 +71,13 @@ if st.button("Run Analysis"):
     if (provider_choice == "OpenAI" and not openai_api_key) or log_file_path is None or not prompt_text:
         st.error("Please ensure all required fields are filled and a valid log file is provided.")
     else:
-        st.info("Running analysis...")
+        st.info("Parsing log file...")
         try:
+            parsed_logs = parse_log_file(log_file_path)
+            st.subheader("Parsed Log Preview")
+            st.code(parsed_logs)
+            
+            st.info("Running analysis...")
             response = analyze_logs(
                 provider_choice=provider_choice,
                 api_key=openai_api_key if provider_choice == "OpenAI" else None,
@@ -93,4 +99,3 @@ if st.button("Run Analysis"):
                     os.remove(log_file_path)
                 except Exception as e:
                     st.error(f"Error cleaning up temporary file: {e}")
-
