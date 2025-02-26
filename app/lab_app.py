@@ -8,10 +8,9 @@ from ollama_utils import list_local_models, pull_model
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-st.title("Log Analysis Buddy - LLM Integration")
+st.title("Log Analysis Buddy - Scan Security Logs for Analysis and Actions")
 st.write("Select an LLM provider, configure API details (if needed), attach a log file or enter its path, enter your prompt and additional context, then run the analysis.")
 
-# Select LLM Provider
 provider_choice = st.selectbox("Select LLM Provider", ["Ollama", "OpenAI"])
 
 if provider_choice == "OpenAI":
@@ -22,7 +21,7 @@ else:
     ollama_api_url = st.text_input("Ollama API URL", value="http://host.docker.internal:11434/api")
     ollama_api_key = st.text_input("Ollama API Key (if required)", type="password")
 
-# Additional Ollama operations (only if provider is Ollama)
+# Ollama specific details
 if provider_choice == "Ollama":
     st.subheader("Ollama Model Management")
     if st.button("List Local Models"):
