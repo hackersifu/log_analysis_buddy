@@ -28,21 +28,18 @@ class OllamaProvider(BaseLLMProvider):
             headers["Authorization"] = f"Bearer {self.api_key}"
         url = f"{self.api_url}/generate"
         response = requests.post(url, json=payload, headers=headers)
+        
         if response.status_code == 200:
-            try:
-                data = response.json()
-            except Exception as e:
-                # Log the raw response text to help diagnose the issue.
-                logging.error("Failed to parse JSON from Ollama API response.")
-                logging.error("Raw response text:")
-                logging.error(response.text)
-                # Optionally, try to parse just the first line if that makes sense:
+            final_response = ""
+            # Split the response text by newlines.
+            for line in response.text.strip().splitlines():
                 try:
-                    first_line = response.text.splitlines()[0]
-                    data = json.loads(first_line)
-                except Exception as e2:
-                    raise Exception(f"Could not parse JSON: {e} | Also failed on first line: {e2}")
-            return data.get("generated_text", "No response returned.")
+                    data = json.loads(line)
+                    part = data.get("response", "")
+                    final_response += part + " "
+                except Exception as e:
+                    logging.error(f"Error parsing line: {line} | {e}")
+            return final_response.strip()
         else:
             raise Exception(f"Ollama API error: {response.status_code} {response.text}")
 
