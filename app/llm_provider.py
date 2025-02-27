@@ -1,6 +1,7 @@
 import requests
 import logging
 import json
+import re
 
 class BaseLLMProvider:
     def get_available_models(self):
@@ -28,17 +29,21 @@ class OllamaProvider(BaseLLMProvider):
             headers["Authorization"] = f"Bearer {self.api_key}"
         url = f"{self.api_url}/generate"
         response = requests.post(url, json=payload, headers=headers)
-        
+
         if response.status_code == 200:
-            final_response = ""
-            # Split the response text by newlines.
+            fragments = []
+            # Process each line from the response text (each line is a JSON object).
             for line in response.text.strip().splitlines():
-                try:
-                    data = json.loads(line)
-                    part = data.get("response", "")
-                    final_response += part + " "
-                except Exception as e:
-                    logging.error(f"Error parsing line: {line} | {e}")
+                if line.strip():  # skip empty lines
+                    try:
+                        data = json.loads(line)
+                        part = data.get("response", "")
+                        fragments.append(part.strip())
+                    except Exception as e:
+                        logging.error(f"Error parsing line: {line} | {e}")
+            # Join the fragments with a space and collapse any extra whitespace.
+            final_response = " ".join(fragments)
+            final_response = re.sub(r'\s+', ' ', final_response)
             return final_response.strip()
         else:
             raise Exception(f"Ollama API error: {response.status_code} {response.text}")
