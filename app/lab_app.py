@@ -4,12 +4,12 @@ import tempfile
 import logging
 import traceback
 from log_analysis_buddy import analyze_logs, parse_log_file
-from ollama_utils import list_local_models, pull_model
+from ollama_utils import list_local_models, pull_model, start_ollama_service
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 st.title("Log Analysis Buddy - Scan Security Logs for Analysis and Actions")
-st.write("Select an LLM provider, configure API details if needed, attach a log file (or provide its path), enter your prompt and additional context, then run the analysis.")
+st.write("Select an LLM provider, configure API details (if needed), manage Ollama models, attach a log file or enter its path, enter your prompt and additional context, then run the analysis.")
 
 # Select LLM Provider
 provider_choice = st.selectbox("Select LLM Provider", ["Ollama", "OpenAI"])
@@ -19,11 +19,14 @@ if provider_choice == "OpenAI":
     if not openai_api_key:
         st.error("OpenAI API Key is required for OpenAI.")
 else:
-    ollama_api_url = st.text_input("Ollama API URL", value="http://host.docker.internal:11434/api")
+    ollama_api_url = st.text_input("Ollama API URL", value="http://localhost:11434/api")
     ollama_api_key = st.text_input("Ollama API Key (if required)", type="password")
+    
+    # Provide a button to start the Ollama service.
+    if st.button("Start Ollama Service"):
+        service_status = start_ollama_service()
+        st.success(service_status)
 
-# Ollama-specific operations
-if provider_choice == "Ollama":
     st.subheader("Ollama Model Management")
     if st.button("List Local Models"):
         output = list_local_models()
@@ -34,7 +37,7 @@ if provider_choice == "Ollama":
         pull_output = pull_model(pull_model_choice)
         st.text_area("Pull Output", value=pull_output, height=200)
 
-# Log input method: Upload CSV or enter file path.
+# Log input method: either upload CSV or enter a file path.
 log_input_method = st.radio("Select log input method", ["Upload CSV", "Enter file path"])
 log_file_path = None
 if log_input_method == "Upload CSV":
