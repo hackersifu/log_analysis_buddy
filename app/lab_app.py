@@ -13,17 +13,17 @@ import streamlit.components.v1 as components  # To render custom HTML
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Updated clean_response function:
-def clean_response(text):
-    """Function to clean the response and make it presentable in the UI."""
-    cleaned_lines = []
-    for line in text.splitlines():
-        # Collapse multiple spaces into one per line.
-        cleaned_line = " ".join(line.split())
-        cleaned_lines.append(cleaned_line)
-    cleaned_text = "\n".join(cleaned_lines)
-    # Ensure Markdown headers have a single space after the '#' characters.
-    cleaned_text = re.sub(r'^(#+)\s*', r'\1 ', cleaned_text, flags=re.MULTILINE)
-    return cleaned_text
+# def clean_response(text):
+#     """Function to clean the response and make it presentable in the UI."""
+#     cleaned_lines = []
+#     for line in text.splitlines():
+#         # Collapse multiple spaces into one per line.
+#         cleaned_line = " ".join(line.split())
+#         cleaned_lines.append(cleaned_line)
+#     cleaned_text = "\n".join(cleaned_lines)
+#     # Ensure Markdown headers have a single space after the '#' characters.
+#     cleaned_text = re.sub(r'^(#+)\s*', r'\1 ', cleaned_text, flags=re.MULTILINE)
+#     return cleaned_text
 
 st.title("Log Analysis Buddy - Scan Security Logs for Analysis and Actions")
 st.write("Select an LLM provider, configure API details (if needed), manage Ollama models, attach a log file or enter its path, enter your prompt and additional context, then run the analysis.")
@@ -132,9 +132,11 @@ if st.button("Run Analysis"):
             if response:
                 st.success("Log analysis complete!")
                 # Clean the response before rendering
-                cleaned_response = refactor_response(response)
-                # Display the cleaned response in a simple, scrollable text area.
-                st.text_area("LLM Response", value=cleaned_response, height=600, disabled=True)
+                raw_cleaned = clean_response(response)
+                key = openai_api_key if provider_choice == "OpenAI" else None
+                refactored = refactor_response(provider_choice, key, model_choice, raw_cleaned)
+                # Display the refactored response in a simple, scrollable text area.
+                st.text_area("LLM Response", value=refactored, height=600, disabled=True)
             else:
                 st.error("Log analysis failed. Check logs for details.")
         except Exception as e:
@@ -146,3 +148,4 @@ if st.button("Run Analysis"):
                     os.remove(log_file_path)
                 except Exception as e:
                     st.error(f"Error cleaning up temporary file: {e}")
+
