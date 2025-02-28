@@ -3,6 +3,7 @@ import os
 import csv
 import json
 import logging
+from llm_provider import get_default_provider
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -71,7 +72,7 @@ def analyze_logs(provider_choice, api_key, log_file_path, additional_context, mo
     logging.info("Constructed prompt for LLM.")
 
     # Instantiate the appropriate provider.
-    from llm_provider import get_default_provider
+    # from llm_provider import get_default_provider
     if provider_choice == "OpenAI":
         provider = get_default_provider("openai", api_key=api_key)
     else:
@@ -81,8 +82,8 @@ def analyze_logs(provider_choice, api_key, log_file_path, additional_context, mo
         response = provider.send_prompt(model_string, prompt_text)
         logging.info("LLM response received successfully.")
         return response
-    except Exception as e:
-        logging.error(f"Error during LLM call: {e}")
+    except Exception as exception_handle:
+        logging.error(f"Error during LLM call: {exception_handle}")
         return None
 
 if __name__ == '__main__':

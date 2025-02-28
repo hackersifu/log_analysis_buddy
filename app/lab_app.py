@@ -7,6 +7,7 @@ import re
 import markdown
 from log_analysis_buddy import analyze_logs, parse_log_file
 from ollama_utils import list_local_models, pull_model, start_ollama_service
+from response_cleaner import clean_response, refactor_response
 import streamlit.components.v1 as components  # To render custom HTML
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -131,7 +132,7 @@ if st.button("Run Analysis"):
             if response:
                 st.success("Log analysis complete!")
                 # Clean the response before rendering
-                cleaned_response = clean_response(response)
+                cleaned_response = refactor_response(response)
                 # Display the cleaned response in a simple, scrollable text area.
                 st.text_area("LLM Response", value=cleaned_response, height=600, disabled=True)
             else:
