@@ -1,10 +1,12 @@
+#// Copyright 2025 Joshua McKiddy. All Rights Reserved.
+#// SPDX-License-Identifier: Apache-2.0
+
 import streamlit as st
 import os
 import tempfile
 import logging
 import traceback
 import re
-import markdown
 from log_analysis_buddy import analyze_logs, parse_log_file
 from ollama_utils import list_local_models, pull_model, start_ollama_service
 from response_cleaner import clean_response, refactor_response
@@ -12,47 +14,9 @@ import streamlit.components.v1 as components  # To render custom HTML
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Updated clean_response function:
-# def clean_response(text):
-#     """Function to clean the response and make it presentable in the UI."""
-#     cleaned_lines = []
-#     for line in text.splitlines():
-#         # Collapse multiple spaces into one per line.
-#         cleaned_line = " ".join(line.split())
-#         cleaned_lines.append(cleaned_line)
-#     cleaned_text = "\n".join(cleaned_lines)
-#     # Ensure Markdown headers have a single space after the '#' characters.
-#     cleaned_text = re.sub(r'^(#+)\s*', r'\1 ', cleaned_text, flags=re.MULTILINE)
-#     return cleaned_text
-
 st.title("Log Analysis Buddy - Scan Security Logs for Analysis and Actions")
 st.write("Select an LLM provider, configure API details (if needed), manage Ollama models, attach a log file or enter its path, enter your prompt and additional context, then run the analysis.")
 
-# # Custom CSS to style the output container
-# st.markdown(
-#     """
-#     <style>
-#     .output-markdown {
-#         white-space: normal;
-#         word-wrap: break-word;
-#         background-color: white;
-#         color: black;
-#         padding: 1rem;
-#         border: 1px solid #ccc;
-#         border-radius: 5px;
-#         margin-top: 1rem;
-#         overflow-y: auto;
-#         max-height: 600px;
-#     }
-#     .stMarkdown p {
-#         margin: 0.5rem 0;
-#     }
-#     </style>
-#     """,
-#     unsafe_allow_html=True
-# )
-
-# Select LLM Provider
 provider_choice = st.selectbox("Select LLM Provider", ["Ollama", "OpenAI"])
 
 if provider_choice == "OpenAI":

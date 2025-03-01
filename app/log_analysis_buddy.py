@@ -1,4 +1,6 @@
-# log_analysis_buddy.py - Modular Log Analysis Functionality
+#// Copyright 2025 Joshua McKiddy. All Rights Reserved.
+#// SPDX-License-Identifier: Apache-2.0
+
 import os
 import csv
 import json

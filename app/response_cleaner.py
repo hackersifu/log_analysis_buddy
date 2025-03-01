@@ -1,3 +1,6 @@
+#// Copyright 2025 Joshua McKiddy. All Rights Reserved.
+#// SPDX-License-Identifier: Apache-2.0
+
 import re
 import logging
 from llm_provider import get_default_provider
