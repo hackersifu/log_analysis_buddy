@@ -20,7 +20,12 @@ def refactor_response(provider_choice, api_key, model_string, cleaned_text):
         provider = get_default_provider("openai", api_key=api_key)
     else:
         provider = get_default_provider("ollama")
-    prompt_text = "Take the response and provide a more readable version, using paragraphs and bullet points."
+    prompt_text = (
+        "Please refactor the following text into a well-structured report "
+        "with appropriate headings, bullet points, and paragraphs."
+        "Fix any grammatical errors and unusual spaces:\n\n"
+        f"{cleaned_text}"
+    )
     logging.info("Cleaning the response for readability...")
     try:
         refactored_clean_response = provider.send_prompt(model_string, prompt_text, cleaned_text)

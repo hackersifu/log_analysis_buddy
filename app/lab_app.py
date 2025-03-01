@@ -73,7 +73,7 @@ else:
         output = list_local_models()
         st.text_area("Local Models", value=str(output), height=200)
     
-    pull_model_choice = st.selectbox("Select a model to pull", ["llama3.2", "deepseek-r1"])
+    pull_model_choice = st.selectbox("Select a model to pull", ["llama3.2", "deepseek-r1", "gemma2:2b"])
     if st.button("Pull Selected Model"):
         pull_output = pull_model(pull_model_choice)
         st.text_area("Pull Output", value=pull_output, height=200)
@@ -104,8 +104,8 @@ additional_context = st.text_area("Additional Context (optional):", "Enter any e
 
 # Model selection based on provider.
 if provider_choice.lower() == "ollama":
-    # For Ollama, default to DeepSeek-R1 and Llama 3.1 per README.
-    available_models = ["DeepSeek-R1", "Llama 3.1"]
+    # For Ollama, default to DeepSeek-R1 and Llama 3.2 per README.
+    available_models = ["DeepSeek-R1", "llama3.2", "gemma2:2b"]
 else:
     available_models = ["gpt-3.5-turbo", "gpt-4"]
 
