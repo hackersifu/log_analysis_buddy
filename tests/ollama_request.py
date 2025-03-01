@@ -1,3 +1,6 @@
+#// Copyright 2025 Joshua McKiddy. All Rights Reserved.
+#// SPDX-License-Identifier: Apache-2.0
+
 from ollama import chat
 from ollama import ChatResponse
 

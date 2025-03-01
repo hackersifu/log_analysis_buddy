@@ -1,4 +1,10 @@
+#// Copyright 2025 Joshua McKiddy. All Rights Reserved.
+#// SPDX-License-Identifier: Apache-2.0
+
 import requests
+import logging
+import json
+import re
 
 class BaseLLMProvider:
     def get_available_models(self):
@@ -8,7 +14,7 @@ class BaseLLMProvider:
         raise NotImplementedError
 
 class OllamaProvider(BaseLLMProvider):
-    def __init__(self, api_url="http://host.docker.internal:11434/api", api_key=None):
+    def __init__(self, api_url="http://localhost:11434/api", api_key=None):
         self.api_url = api_url
         self.api_key = api_key
 
@@ -24,14 +30,27 @@ class OllamaProvider(BaseLLMProvider):
         headers = {"Content-Type": "application/json"}
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
-        # Use the correct endpoint (/generate).
         url = f"{self.api_url}/generate"
         response = requests.post(url, json=payload, headers=headers)
+
         if response.status_code == 200:
-            data = response.json()
-            return data.get("generated_text", "No response returned.")
+            fragments = []
+            # Process each line from the response text (each line is a JSON object).
+            for line in response.text.strip().splitlines():
+                if line.strip():  # skip empty lines
+                    try:
+                        data = json.loads(line)
+                        part = data.get("response", "")
+                        fragments.append(part.strip())
+                    except Exception as e:
+                        logging.error(f"Error parsing line: {line} | {e}")
+            # Join the fragments with a space and collapse any extra whitespace.
+            final_response = " ".join(fragments)
+            final_response = re.sub(r'\s+', ' ', final_response)
+            return final_response.strip()
         else:
             raise Exception(f"Ollama API error: {response.status_code} {response.text}")
+
 
 class OpenAIProvider(BaseLLMProvider):
     def __init__(self, api_key):
@@ -65,7 +84,7 @@ class OpenAIProvider(BaseLLMProvider):
 def get_default_provider(provider_name="ollama", **kwargs):
     if provider_name.lower() == "ollama":
         return OllamaProvider(
-            api_url=kwargs.get("api_url", "http://host.docker.internal:11434/api"),
+            api_url=kwargs.get("api_url", "http://localhost:11434/api"),
             api_key=kwargs.get("api_key")
         )
     elif provider_name.lower() == "openai":
