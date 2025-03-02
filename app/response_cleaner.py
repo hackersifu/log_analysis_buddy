@@ -7,46 +7,55 @@ from llm_provider import get_default_provider
 from langchain.prompts import PromptTemplate
 
 def clean_response(text):
-    """Function to clean the response and make it presentable in the UI."""
+    """
+    Clean the raw LLM response by collapsing extra spaces and normalizing header spacing.
+    """
     cleaned_lines = []
     for line in text.splitlines():
-        # Collapse multiple spaces into one per line.
+        # Collapse multiple spaces into one per line
         cleaned_line = " ".join(line.split())
         cleaned_lines.append(cleaned_line)
     cleaned_text = "\n".join(cleaned_lines)
-    # Ensure Markdown headers have a single space after the '#' characters.
+
+    # Ensure Markdown headers have exactly one space after the '#' symbols
     cleaned_text = re.sub(r'^(#+)\s*', r'\1 ', cleaned_text, flags=re.MULTILINE)
     return cleaned_text
 
 def refactor_response(provider_choice, api_key, model_string, cleaned_text):
     """
-    Function to refactor the response with AI using LangChain's PromptTemplate.
-    This formats the prompt nicely and then calls the provider's send_prompt method.
+    Use LangChain's PromptTemplate to instruct the LLM to reformat the cleaned text into
+    a well-structured Markdown report. The output must include headings, bullet points,
+    and properly organized paragraphs.
     """
-    # Get the provider based on the selection.
+    # Determine which provider to use
     if provider_choice == "OpenAI":
         provider = get_default_provider("openai", api_key=api_key)
     else:
         provider = get_default_provider("ollama")
-    
-    # Use LangChain's PromptTemplate to structure the instruction.
+
+    # Create a LangChain PromptTemplate for reformatting
     prompt_template = PromptTemplate(
         input_variables=["text"],
         template=(
-            "Please refactor the following text into a well-structured report with clear headings, "
-            "bullet points, and organized paragraphs. Fix any grammatical errors and remove unnecessary spaces.\n\n"
-            "Text:\n{text}"
+            "Refactor the following text into valid Markdown with:\n"
+            "- Proper headings (e.g., '# Overview', '## Observations')\n"
+            "- Bullet points (using '- ' or '* ')\n"
+            "- Paragraphs separated by blank lines\n"
+            "- Make sure to include blank lines between paragraphs and each bullet point on its own line\n"
+            "Fix grammatical errors, remove extra spacing, but do NOT remove essential content.\n\n"
+            "Text to refactor:\n{text}"
         )
     )
-    
-    # Format the prompt using the template.
+
+    # Format the final prompt
     prompt_text = prompt_template.format(text=cleaned_text)
     logging.info("Refactoring response using LangChain prompt template...")
-    
+
     try:
-        # Call the provider's send_prompt with the formatted prompt.
+        # Send to the LLM
         refactored_clean_response = provider.send_prompt(model_string, prompt_text)
-    except Exception as exception_handle:
-        logging.error(f"Error during LLM call in refactor_response: {exception_handle}")
+    except Exception as e:
+        logging.error(f"Error during LLM call in refactor_response: {e}")
         return None
+
     return refactored_clean_response
