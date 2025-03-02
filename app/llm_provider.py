@@ -35,21 +35,28 @@ class OllamaProvider(BaseLLMProvider):
 
         if response.status_code == 200:
             fragments = []
-            # Process each line from the response text (each line is a JSON object).
             for line in response.text.strip().splitlines():
-                if line.strip():  # skip empty lines
+                if line.strip():
                     try:
                         data = json.loads(line)
                         part = data.get("response", "")
-                        fragments.append(part.strip())
+                        # Keep the exact text (including newlines inside 'part' if any)
+                        fragments.append(part)
                     except Exception as e:
                         logging.error(f"Error parsing line: {line} | {e}")
-            # Join the fragments with a space and collapse any extra whitespace.
-            final_response = " ".join(fragments)
-            final_response = re.sub(r'\s+', ' ', final_response)
+
+            # JOIN WITH NEWLINES to preserve headings/bullets from the LLM
+            final_response = "\n".join(fragments)
+
+            # OPTIONAL: If you want minimal post-processing, you could still do a small cleanup
+            # but do NOT re-sub everything to single spaces:
+            # final_response = final_response.replace('\r', '')
+
             return final_response.strip()
+
         else:
             raise Exception(f"Ollama API error: {response.status_code} {response.text}")
+
 
 
 class OpenAIProvider(BaseLLMProvider):
