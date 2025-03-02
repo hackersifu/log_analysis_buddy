@@ -95,12 +95,8 @@ if st.button("Run Analysis"):
             )
             if response:
                 st.success("Log analysis complete!")
-                # Clean the response before rendering
-                raw_cleaned = clean_response(response)
-                key = openai_api_key if provider_choice == "OpenAI" else None
-                refactored = refactor_response(provider_choice, key, model_choice, raw_cleaned)
-                # Display the refactored response in a simple, scrollable text area.
-                st.text_area("LLM Response", value=refactored, height=600, disabled=True)
+                cleaned_response = clean_response(response)
+                st.text_area("LLM Response", value=cleaned_response, height=600, disabled=True)
             else:
                 st.error("Log analysis failed. Check logs for details.")
         except Exception as e:

@@ -4,6 +4,7 @@
 import re
 import logging
 from llm_provider import get_default_provider
+from langchain.prompts import PromptTemplate
 
 def clean_response(text):
     """Function to clean the response and make it presentable in the UI."""
@@ -18,23 +19,34 @@ def clean_response(text):
     return cleaned_text
 
 def refactor_response(provider_choice, api_key, model_string, cleaned_text):
-    """Function to refactor the response with AI."""
+    """
+    Function to refactor the response with AI using LangChain's PromptTemplate.
+    This formats the prompt nicely and then calls the provider's send_prompt method.
+    """
+    # Get the provider based on the selection.
     if provider_choice == "OpenAI":
         provider = get_default_provider("openai", api_key=api_key)
     else:
         provider = get_default_provider("ollama")
-    prompt_text = (
-        "Please refactor the following text into a well-structured report "
-        "with appropriate headings, bullet points, and paragraphs."
-        "Fix any grammatical errors and unusual spaces:\n\n"
-        f"{cleaned_text}"
+    
+    # Use LangChain's PromptTemplate to structure the instruction.
+    prompt_template = PromptTemplate(
+        input_variables=["text"],
+        template=(
+            "Please refactor the following text into a well-structured report with clear headings, "
+            "bullet points, and organized paragraphs. Fix any grammatical errors and remove unnecessary spaces.\n\n"
+            "Text:\n{text}"
+        )
     )
-    logging.info("Cleaning the response for readability...")
+    
+    # Format the prompt using the template.
+    prompt_text = prompt_template.format(text=cleaned_text)
+    logging.info("Refactoring response using LangChain prompt template...")
+    
     try:
-        refactored_clean_response = provider.send_prompt(model_string, prompt_text, cleaned_text)
+        # Call the provider's send_prompt with the formatted prompt.
+        refactored_clean_response = provider.send_prompt(model_string, prompt_text)
     except Exception as exception_handle:
-        logging.error(f"Error during LLM call: {exception_handle}")
+        logging.error(f"Error during LLM call in refactor_response: {exception_handle}")
         return None
     return refactored_clean_response
-  
-    
