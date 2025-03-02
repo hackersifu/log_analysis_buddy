@@ -50,19 +50,11 @@ def parse_log_file(file_path):
         return read_plain_log(file_path)
 
 def analyze_logs(provider_choice, api_key, log_file_path, additional_context, model_string):
-    """
-    Perform log analysis by:
-      - Parsing the log file.
-      - Constructing the prompt (combining log contents and additional context).
-      - Calling the selected LLM provider to generate a response.
-    Returns the LLM response as a string.
-    """
     logging.info("Starting log analysis...")
     if not os.path.exists(log_file_path):
         logging.error("Log file not found.")
         return None
 
-    # Use enhanced parsing
     log_contents = parse_log_file(log_file_path)
     if not log_contents:
         logging.error("No log contents could be read.")
@@ -70,11 +62,15 @@ def analyze_logs(provider_choice, api_key, log_file_path, additional_context, mo
 
     logging.info("Parsed log file successfully.")
 
-    prompt_text = f"Perform a detailed security analysis of these logs:\n{log_contents}\n\nAdditional context: {additional_context}"
+    prompt_text = (
+        "Perform a detailed security analysis of the following logs and provide your response as a well-structured "
+        "Markdown report with clear headings, bullet points, and paragraphs. Fix any grammatical errors and remove "
+        "unnecessary spacing.\n\n"
+        "Logs:\n" + log_contents + "\n\n"
+        "Additional context:\n" + additional_context
+    )
     logging.info("Constructed prompt for LLM.")
 
-    # Instantiate the appropriate provider.
-    # from llm_provider import get_default_provider
     if provider_choice == "OpenAI":
         provider = get_default_provider("openai", api_key=api_key)
     else:
