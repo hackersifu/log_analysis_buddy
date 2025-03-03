@@ -20,12 +20,10 @@ def clean_response(text):
 
 def refactor_response(provider_choice, api_key, model_string, cleaned_text):
     """Function to refactor the cleaned response into valid Markdown using the LangChain LLM."""
-    # OpenAI functionality is incomplete
     if provider_choice == "OpenAI":
         provider = get_default_provider("openai", api_key=api_key)
     else:
         provider = get_default_provider("ollama")
-        
     prompt_template = PromptTemplate(
         input_variables=["text"],
         template=(
@@ -40,10 +38,12 @@ def refactor_response(provider_choice, api_key, model_string, cleaned_text):
     )
     prompt_text = prompt_template.format(text=cleaned_text)
     logging.info("Refactoring response using LangChain prompt template...")
+
     try:
         # Send to the LLM
         refactored_clean_response = provider.send_prompt(model_string, prompt_text)
     except Exception as e:
         logging.error(f"Error during LLM call in refactor_response: {e}")
         return None
+
     return refactored_clean_response

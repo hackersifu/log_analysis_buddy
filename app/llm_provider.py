@@ -40,6 +40,7 @@ class OllamaProvider(BaseLLMProvider):
                     try:
                         data = json.loads(line)
                         part = data.get("response", "")
+
                         fragments.append(part)
                     except Exception as e:
                         logging.error(f"Error parsing line: {line} | {e}")
