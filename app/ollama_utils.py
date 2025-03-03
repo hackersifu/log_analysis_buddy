@@ -38,7 +38,7 @@ def is_port_in_use(port, host="127.0.0.1"):
 
 def start_ollama_service():
     """Function to start the Ollama service in a background thread."""
-    # Check if port 11434 is already in use.
+    # Note: Port check to see if Ollama is running.
     if is_port_in_use(11434):
         return "Ollama service is already running."
 

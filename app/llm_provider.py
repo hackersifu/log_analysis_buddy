@@ -40,17 +40,13 @@ class OllamaProvider(BaseLLMProvider):
                     try:
                         data = json.loads(line)
                         part = data.get("response", "")
-                        # Keep the exact text (including newlines inside 'part' if any)
+
                         fragments.append(part)
                     except Exception as e:
                         logging.error(f"Error parsing line: {line} | {e}")
 
             # JOIN WITH NEWLINES to preserve headings/bullets from the LLM
             final_response = "\n".join(fragments)
-
-            # OPTIONAL: If you want minimal post-processing, you could still do a small cleanup
-            # but do NOT re-sub everything to single spaces:
-            # final_response = final_response.replace('\r', '')
 
             return final_response.strip()
 
