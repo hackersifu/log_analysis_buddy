@@ -8,6 +8,7 @@ from langchain.prompts import PromptTemplate
 
 def clean_response(text):
     """Function to clean up the response text from the LLM."""
+
     cleaned_lines = []
     for line in text.splitlines():
         # Collapse multiple spaces into one per line

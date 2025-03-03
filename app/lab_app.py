@@ -40,6 +40,7 @@ else:
         st.text_area("Local Models", value=str(output), height=200)
 
     pull_model_choice = st.selectbox("Select a model to pull", ["gemma2:2b", "llama3.2", "deepseek-r1"])
+
     if st.button("Pull Selected Model"):
         pull_output = pull_model(pull_model_choice)
         st.text_area("Pull Output", value=pull_output, height=200)
