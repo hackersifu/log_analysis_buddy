@@ -10,7 +10,7 @@ from llm_provider import get_default_provider
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def read_csv_log(file_path):
-    """Read a CSV log file and return its contents as a string."""
+    """Function to read CSV log files and return their contents as a string."""
     try:
         with open(file_path, 'r', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
@@ -21,7 +21,7 @@ def read_csv_log(file_path):
         return ""
 
 def read_json_log(file_path):
-    """Read a JSON log file and return its pretty-printed contents as a string."""
+    """Function to read JSON log files and return their contents as a string."""
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -31,7 +31,7 @@ def read_json_log(file_path):
         return ""
 
 def read_plain_log(file_path):
-    """Read a plain text log file and return its contents."""
+    """Function to read plain text log files and return their contents as a string."""
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             return f.read()
@@ -40,7 +40,7 @@ def read_plain_log(file_path):
         return ""
 
 def parse_log_file(file_path):
-    """Determine the log file type by its extension and return its contents as a string."""
+    """Function to parse log files based on their extension."""
     ext = os.path.splitext(file_path)[1].lower()
     if ext == ".csv":
         return read_csv_log(file_path)
@@ -50,6 +50,7 @@ def parse_log_file(file_path):
         return read_plain_log(file_path)
 
 def analyze_logs(provider_choice, api_key, log_file_path, additional_context, model_string):
+    """Function to analyze log files using the specified LLM provider."""
     logging.info("Starting log analysis...")
     if not os.path.exists(log_file_path):
         logging.error("Log file not found.")
@@ -85,5 +86,5 @@ def analyze_logs(provider_choice, api_key, log_file_path, additional_context, mo
         return None
 
 if __name__ == '__main__':
-    # CLI mode omitted for brevity.
+    # CLI mode disabled for enhancement of the full application
     pass
