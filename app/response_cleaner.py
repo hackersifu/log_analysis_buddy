@@ -7,33 +7,24 @@ from llm_provider import get_default_provider
 from langchain.prompts import PromptTemplate
 
 def clean_response(text):
-    """
-    Clean the raw LLM response by collapsing extra spaces and normalizing header spacing.
-    """
+    """Function to clean up the response text from the LLM."""
+
     cleaned_lines = []
     for line in text.splitlines():
         # Collapse multiple spaces into one per line
         cleaned_line = " ".join(line.split())
         cleaned_lines.append(cleaned_line)
     cleaned_text = "\n".join(cleaned_lines)
-
-    # Ensure Markdown headers have exactly one space after the '#' symbols
+    # Need to fix
     cleaned_text = re.sub(r'^(#+)\s*', r'\1 ', cleaned_text, flags=re.MULTILINE)
     return cleaned_text
 
 def refactor_response(provider_choice, api_key, model_string, cleaned_text):
-    """
-    Use LangChain's PromptTemplate to instruct the LLM to reformat the cleaned text into
-    a well-structured Markdown report. The output must include headings, bullet points,
-    and properly organized paragraphs.
-    """
-    # Determine which provider to use
+    """Function to refactor the cleaned response into valid Markdown using the LangChain LLM."""
     if provider_choice == "OpenAI":
         provider = get_default_provider("openai", api_key=api_key)
     else:
         provider = get_default_provider("ollama")
-
-    # Create a LangChain PromptTemplate for reformatting
     prompt_template = PromptTemplate(
         input_variables=["text"],
         template=(
@@ -46,8 +37,6 @@ def refactor_response(provider_choice, api_key, model_string, cleaned_text):
             "Text to refactor:\n{text}"
         )
     )
-
-    # Format the final prompt
     prompt_text = prompt_template.format(text=cleaned_text)
     logging.info("Refactoring response using LangChain prompt template...")
 
