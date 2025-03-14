@@ -3,8 +3,18 @@
 ![GitHub](https://img.shields.io/github/license/hackersifu/log_analysis_buddy)
 
 
-# Log Analysis Buddy - AI Powered Log Analysis Helper
-The Log Analysis Buddy is an AI powered log analysis helper that can be used to help analysts perform log analysis. The Log analysis Buddy uses LLMs to receive log input (in .csv, or comma delimited, format) from an incident responder, to perform additional analysis for the responder. This analysis can be used to augment the responder's investigation, to provide thourogh results for reporting.
+# Log Analysis Buddy – AI-Powered Log Analysis Helper
+
+Log Analysis Buddy is an open-source, AI-driven tool designed to help security analysts and incident responders perform comprehensive log analysis. By leveraging large language models (LLMs), it accepts log input (CSV or comma-delimited files) and provides deeper insights that augment an investigator’s workflow. 
+
+This repository integrates features such as:
+
+- **Multiple LLM Providers:** Support for providers like local Ollama models, or OpenAI.  
+- **Flexible Log Formats:** Works primarily with CSV but can be adapted to handle JSON or other log types.  
+- **Incident Response Focus:** Provides summarized, human-readable findings to expedite security investigations.  
+- **Extensibility:** Built with Python (and optionally Streamlit for UI), making it straightforward to add advanced functionalities (e.g., correlation analysis, custom prompts).  
+
+Through automating routine log parsing tasks and generating detailed, structured results, Log Analysis Buddy empowers responders to investigate incidents faster and produce more thorough reporting.
 
 ## Disclaimer
 **2025-02-28: This project is currently in development and is a proof of concept. Additionally, you are responsible for any data that you provide to public LLMs via this project. This includes any logs that are provided, API keys, and any data via the context prompt.**
