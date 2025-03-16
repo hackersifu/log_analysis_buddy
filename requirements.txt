@@ -4,6 +4,6 @@ setuptools==75.6.0
 wheel==0.45.1
 streamlit==1.37.0
 altair==4.2.2
-ollama==0.4.7
+ollama==0.6.1
 langchain==0.3.19
 markdown==3.7.0
